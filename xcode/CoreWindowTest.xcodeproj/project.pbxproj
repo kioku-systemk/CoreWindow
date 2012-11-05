@@ -23,7 +23,6 @@
 		77E5215D15DF2CDE000595F8 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		77E5217215DF4454000595F8 /* CoreWindow_mac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreWindow_mac.h; sourceTree = "<group>"; };
 		77E5217315DF4454000595F8 /* CoreWindow_mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreWindow_mac.mm; sourceTree = "<group>"; };
-		77E5217615DF4454000595F8 /* glheaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glheaders.h; path = ../glheaders.h; sourceTree = "<group>"; };
 		77E5217715DF4454000595F8 /* test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test.cpp; path = ../test.cpp; sourceTree = "<group>"; };
 		77E5217C15DF44DE000595F8 /* CoreWindowTest-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "CoreWindowTest-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -45,7 +44,6 @@
 			isa = PBXGroup;
 			children = (
 				77E5216E15DF4454000595F8 /* Core */,
-				77E5217615DF4454000595F8 /* glheaders.h */,
 				77E5217715DF4454000595F8 /* test.cpp */,
 				77E5213815DF2A87000595F8 /* Resource */,
 				77E5213115DF2A87000595F8 /* Frameworks */,
