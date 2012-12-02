@@ -183,7 +183,7 @@ static CoreWindow_mac* g_mainWin = 0;
 	{
 		unicode=[chrs characterAtIndex:0];
 		unicode &= 255;
-		if (32<=unicode && unicode<128)
+		if (0<=unicode && unicode<128)
 			m_ownerWin->KeyDown(unicode);
 	}
 	trace("%s : %d\n",__FUNCTION__, unicode);
@@ -205,7 +205,7 @@ static CoreWindow_mac* g_mainWin = 0;
 	if([chrs length]>0)
 	{
 		unicode=[chrs characterAtIndex:0];
-		if (32<=unicode && unicode<128)
+		if (0<=unicode && unicode<128)
 			m_ownerWin->KeyUp(unicode);
 	}
 	trace("%s : %d\n",__FUNCTION__, unicode);
@@ -412,9 +412,9 @@ void CoreWindow_mac::MainLoop()
 	}
 }
 
-CoreWindow_mac::CoreWindow_mac(int x, int y, int width ,int height, const char* title)
+CoreWindow_mac::CoreWindow_mac(int x, int y, int width ,int height, const char* title, bool fullscreenMode)
 {
-	if (g_mainWin == 0)
+    if (g_mainWin == 0)
 		g_mainWin = this;
 	NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
 		
@@ -422,7 +422,6 @@ CoreWindow_mac::CoreWindow_mac(int x, int y, int width ,int height, const char* 
 		
 	[NSApp finishLaunching];
 
-    
 	NSRect contRect;
 	contRect = NSMakeRect(x, y, width, height);
 	
@@ -433,6 +432,7 @@ CoreWindow_mac::CoreWindow_mac(int x, int y, int width ,int height, const char* 
 	| NSMiniaturizableWindowMask
 	| NSResizableWindowMask
     | NSWindowFullScreenButton;
+    
     
 	m_win = [skOpenGLWindow alloc];
 	[m_win
@@ -477,10 +477,16 @@ CoreWindow_mac::CoreWindow_mac(int x, int y, int width ,int height, const char* 
 	[m_win makeKeyAndOrderFront:nil];
 	[m_win makeMainWindow];
 	
+    if (fullscreenMode)
+        [m_view enterFullScreenMode:[NSScreen mainScreen] withOptions:nil];
+    
+    NSRect rc = [m_view bounds];
+    m_w = rc.size.width;
+    m_h = rc.size.height;
 	[NSApp activateIgnoringOtherApps:YES];
 	
 	skAddMenu();
-		
+    
 	[pool release];
 
 }
@@ -508,3 +514,10 @@ void CoreWindow_mac::Toplevel(bool top)
 		[m_win setLevel:NSNormalWindowLevel];
 }
 
+const char* CoreWindow_mac::GetExePath() const
+{
+    static char exepath[2048];
+    NSString *curDir = [[NSBundle mainBundle] bundlePath];
+    strcpy(exepath, [curDir UTF8String]);
+    return exepath;
+}

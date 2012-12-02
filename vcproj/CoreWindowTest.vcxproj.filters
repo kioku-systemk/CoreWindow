@@ -23,9 +23,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\glheaders.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="..\Core\CoreWindow.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>

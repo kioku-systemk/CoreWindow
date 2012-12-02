@@ -10,6 +10,8 @@
 #include <gl/GL.h>
 #include <WindowsX.h>
 
+#include <stdio.h>
+
 CoreWindow_wgl* g_mainWin = 0;
 
 #if _UNICODE
@@ -18,7 +20,7 @@ CoreWindow_wgl* g_mainWin = 0;
 #define _TX(x) x
 #endif
 
-bool CoreWindow_wgl::createWindow(int x, int y, int width, int height, const TCHAR* title)
+bool CoreWindow_wgl::createWindow(int x, int y, int width, int height, const TCHAR* title, bool fullscreenmode)
 {
 	WNDCLASS wc;
 	HWND     hWnd;
@@ -30,7 +32,10 @@ bool CoreWindow_wgl::createWindow(int x, int y, int width, int height, const TCH
 	WindowRect.top    = 0;
 	WindowRect.bottom = height;
 	dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-	dwStyle   = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+	if (fullscreenmode)
+		dwStyle = WS_POPUPWINDOW | WS_MAXIMIZE;
+	else
+		dwStyle   = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 
 	AdjustWindowRect(&WindowRect, dwStyle, FALSE);
 
@@ -158,11 +163,13 @@ void CoreWindow_wgl::Toplevel(bool top)
 	}
 }
 
-CoreWindow_wgl::CoreWindow_wgl(int x, int y, int width, int height, const TCHAR* title)
+CoreWindow_wgl::CoreWindow_wgl(int x, int y, int width, int height, const TCHAR* title, bool fullscreenmode)
 {
-	 createWindow(x, y, width, height, title);
+	 createWindow(x, y, width, height, title, fullscreenmode);
 	 initGL(m_hWnd);
-	 resize(width, height);
+	 RECT rect;
+	 GetClientRect(m_hWnd, &rect);
+	 resize(rect.right - rect.left, rect.bottom - rect.top);
 }
 
 CoreWindow_wgl::~CoreWindow_wgl()
@@ -172,6 +179,8 @@ CoreWindow_wgl::~CoreWindow_wgl()
 
 void CoreWindow_wgl::resize(int width, int height)
 {
+	m_w = width;
+	m_h = height;
 	glViewport(0, 0, width, height);
 	glLoadIdentity();
 
@@ -356,4 +365,13 @@ HDC CoreWindow_wgl::GetHDC()
 void CoreWindow_wgl::SwapBuffer()
 {
 	SwapBuffers(m_hDC);
+}
+
+const char* CoreWindow_wgl::GetExePath() const
+{
+	char exefilepath[2048];
+	static char exepath[2048];
+	GetModuleFileName(NULL, exefilepath, sizeof(exefilepath));
+	_splitpath(exefilepath, 0, exepath, 0, 0);
+	return exepath;
 }
