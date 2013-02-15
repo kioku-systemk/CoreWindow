@@ -1,0 +1,10 @@
+INCS=
+LIBS=-framework OpenGL -framework Cocoa
+
+DEFINES = -g
+CXX=g++
+
+all:
+	mkdir -p Test.app/Contents/MacOS;
+	$(CXX) $(INCS) $(DEFINES) test.cpp Core/CoreWindow_mac.mm $(LIBS) -o Test.app/Contents/MacOS/Test
+
