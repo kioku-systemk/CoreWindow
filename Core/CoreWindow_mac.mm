@@ -24,7 +24,7 @@ inline void trace(const char* f, ...)
 #endif
 
 
-static CoreWindow_mac* g_mainWin = 0;
+static CoreWindow* g_mainWin = 0;
 
 @interface skMacDelegate : NSObject//  < NSApplicationDelegate >
 /* Example: Fire has the same problem no explanation */
@@ -42,12 +42,12 @@ static CoreWindow_mac* g_mainWin = 0;
 
 @interface skOpenGLWindow : NSWindow
 {
-	CoreWindow_mac* m_ownerWin;
+	CoreWindow* m_ownerWin;
 }
 @end
 
 @implementation skOpenGLWindow
-- (id) initWithContentRect: (NSRect)rect styleMask:(NSUInteger)wndStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferFlg win:(CoreWindow_mac*)ownerWin
+- (id) initWithContentRect: (NSRect)rect styleMask:(NSUInteger)wndStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferFlg win:(CoreWindow*)ownerWin
 {
 	[super initWithContentRect:rect styleMask:wndStyle backing:bufferingType defer:deferFlg];
 	m_ownerWin = ownerWin;
@@ -93,7 +93,7 @@ static CoreWindow_mac* g_mainWin = 0;
 
 @interface skOpenGLView : NSOpenGLView 
 {
-	CoreWindow_mac* m_ownerWin;
+	CoreWindow* m_ownerWin;
 	int m_width;
 	int m_height;
 	NSTrackingRectTag _tag;
@@ -103,7 +103,7 @@ static CoreWindow_mac* g_mainWin = 0;
 @end
 
 @implementation skOpenGLView
--(void) setOwnerWindow: (CoreWindow_mac*) win
+-(void) setOwnerWindow: (CoreWindow*) win
 {
 	m_isMouseCursorIn = false;
 	m_ownerWin = win;
@@ -296,6 +296,12 @@ static CoreWindow_mac* g_mainWin = 0;
 	m_ownerWin->MouseRightUp((int)[theEvent locationInWindow].x,m_height - (int)[theEvent locationInWindow].y);
 }
 
+- (void) rightMouseDragged:(NSEvent *)theEvent
+{
+	trace("%s %d %d\n",__FUNCTION__,(int)[theEvent locationInWindow].x,(int)[theEvent locationInWindow].y);
+	m_ownerWin->MouseMove((int)[theEvent locationInWindow].x, m_height - (int)[theEvent locationInWindow].y);
+}
+
 - (void) otherMouseDown:(NSEvent *)theEvent
 {
 	trace("%s %d %d\n",__FUNCTION__,(int)[theEvent locationInWindow].x,(int)[theEvent locationInWindow].y);
@@ -307,6 +313,13 @@ static CoreWindow_mac* g_mainWin = 0;
 	trace("%s %d %d\n",__FUNCTION__,(int)[theEvent locationInWindow].x,(int)[theEvent locationInWindow].y);
 	m_ownerWin->MouseMiddleUp((int)[theEvent locationInWindow].x,m_height - (int)[theEvent locationInWindow].y);
 }
+
+- (void) otherMouseDragged:(NSEvent *)theEvent
+{
+	trace("%s %d %d\n",__FUNCTION__,(int)[theEvent locationInWindow].x,(int)[theEvent locationInWindow].y);
+	m_ownerWin->MouseMove((int)[theEvent locationInWindow].x, m_height - (int)[theEvent locationInWindow].y);
+}
+
 
 @end
 
@@ -396,12 +409,12 @@ void skPollDeviceC(void)
 } // namespace 
 
 
-void CoreWindow_mac::DoEvents()
+void CoreWindow::DoEvents()
 {
 	skPollDeviceC();
 }
 
-void CoreWindow_mac::MainLoop()
+void CoreWindow::MainLoop()
 {
 	while (1)
 	{
@@ -412,9 +425,9 @@ void CoreWindow_mac::MainLoop()
 	}
 }
 
-CoreWindow_mac::CoreWindow_mac(int x, int y, int width ,int height, const char* title, bool fullscreenMode)
+CoreWindow::CoreWindow(int x, int y, int width ,int height, const char* title, bool fullscreenMode)
 {
-    if (g_mainWin == 0)
+	if (g_mainWin == 0)
 		g_mainWin = this;
 	NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
 		
@@ -422,6 +435,7 @@ CoreWindow_mac::CoreWindow_mac(int x, int y, int width ,int height, const char* 
 		
 	[NSApp finishLaunching];
 
+    
 	NSRect contRect;
 	contRect = NSMakeRect(x, y, width, height);
 	
@@ -432,7 +446,6 @@ CoreWindow_mac::CoreWindow_mac(int x, int y, int width ,int height, const char* 
 	| NSMiniaturizableWindowMask
 	| NSResizableWindowMask
     | NSWindowFullScreenButton;
-    
     
 	m_win = [skOpenGLWindow alloc];
 	[m_win
@@ -486,27 +499,27 @@ CoreWindow_mac::CoreWindow_mac(int x, int y, int width ,int height, const char* 
 	[NSApp activateIgnoringOtherApps:YES];
 	
 	skAddMenu();
-    
+
 	[pool release];
 
 }
 
-CoreWindow_mac::~CoreWindow_mac()
+CoreWindow::~CoreWindow()
 {
 
 }
 
-void CoreWindow_mac::Active()
+void CoreWindow::Active()
 {
 	[[m_view openGLContext] makeCurrentContext];
 }
 
-void CoreWindow_mac::SwapBuffer()
+void CoreWindow::SwapBuffer()
 {
     glSwapAPPLE();
 }
 
-void CoreWindow_mac::Toplevel(bool top)
+void CoreWindow::Toplevel(bool top)
 {
 	if (top)
 		[m_win setLevel:NSPopUpMenuWindowLevel];
@@ -514,10 +527,11 @@ void CoreWindow_mac::Toplevel(bool top)
 		[m_win setLevel:NSNormalWindowLevel];
 }
 
-const char* CoreWindow_mac::GetExePath() const
+const char* CoreWindow::GetExePath() const
 {
     static char exepath[2048];
     NSString *curDir = [[NSBundle mainBundle] bundlePath];
     strcpy(exepath, [curDir UTF8String]);
     return exepath;
 }
+

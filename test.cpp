@@ -53,6 +53,18 @@ public:
         printf("KeyUp=%d\n", key);
 	}
 	
+	void Magnify(float z)
+	{
+		printf("Magnify=%f\n", z);
+	}
+	void Swipe(float dx, float dy, float dz)
+	{
+		printf("Swipe(%f,%f,%f)\n", dx,dy,dz);
+	}
+	void Rotate(float r)
+	{
+		printf("Rotate=%f\n", r);
+	}
     void Draw()
     {
         glClearColor(0.5,0.5,0.5,0);

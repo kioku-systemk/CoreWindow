@@ -1,6 +1,5 @@
 /*
  *  CoreWindow_mac.h
- *  sk_mt_test
  *
  *  Created by kioku on 10/08/11.
  *  Copyright 2010 System K. All rights reserved.
@@ -19,11 +18,11 @@
 #endif
 
 
-class CoreWindow_mac : public CoreWindowPlatform
+class CoreWindow : public CoreWindowPlatform
 {
 protected:
-	CoreWindow_mac(int x, int y, int width, int height, const char* title, bool fullscreenMode = false);
-	~CoreWindow_mac();
+	CoreWindow(int x, int y, int width, int height, const char* title, bool fullscreenMode = false);
+	~CoreWindow();
 public:
 
 	virtual void MouseLeftDown  (int x, int y){}
@@ -62,7 +61,7 @@ protected:
 	
 };
 
-void CoreWindow_mac_DoEvents();
+void CoreWindow_DoEvents();
 
 
 #endif // COREWINDOW_MAC_HEADER
