@@ -11,6 +11,9 @@ CoreWindow
 - Window
 - MacOSX(Cocoa)
 - Linux(X11)
+
+# License
+- MIT License
  
 # Other
 - See: SimpleUI (https://github.com/kioku-systemk/SimpleUI)
