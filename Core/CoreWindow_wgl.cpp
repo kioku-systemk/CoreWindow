@@ -179,6 +179,8 @@ CoreWindow::~CoreWindow()
 
 void CoreWindow::resize(int width, int height)
 {
+	m_w = width;
+	m_h = height;
 	glViewport(0, 0, width, height);
 	glLoadIdentity();
 
