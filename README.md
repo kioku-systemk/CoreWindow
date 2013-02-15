@@ -4,9 +4,8 @@ CoreWindow
 # General
 - Cross Platform library for creating OpenGL window.
 - include 1header, add 1implementation.
-
-- OpenGL用ウインドウ作成クロスプラットフォームライブラリ
-- 1ヘッダーのインクルード，1実装ファイルの追加で利用可能
+- OpenGL用ウインドウ作成クロスプラットフォームライブラリ.
+- 1ヘッダーのインクルード，1実装ファイルの追加で利用可能.
 
 # Platform
 - Window
@@ -15,4 +14,3 @@ CoreWindow
  
 # Other
 - See: SimpleUI (https://github.com/kioku-systemk/SimpleUI)
-
