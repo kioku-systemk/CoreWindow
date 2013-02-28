@@ -45,6 +45,9 @@ public:
     virtual int GetHeight() const              = 0;
     
     virtual const char* GetExePath() const     = 0;
+	virtual const char* FileOpenDialog(const char* ext) const = 0;
+	virtual const char* FileSaveDialog(const char* ext) const = 0;
+
 
 };
 

@@ -535,3 +535,37 @@ const char* CoreWindow::GetExePath() const
     return exepath;
 }
 
+const char* CoreWindow::FileOpenDialog(const char* ext) const
+{
+	static char strbuf[1024] = {};
+	NSString* nsext = [NSString stringWithUTF8String:ext];
+	NSOpenPanel *openPanel	= [NSOpenPanel openPanel];
+	NSArray *allowedFileTypes = [NSArray arrayWithObjects:nsext,nil];
+    [openPanel setAllowedFileTypes:allowedFileTypes];
+    NSInteger pressedButton = [openPanel runModal];
+
+	if( pressedButton == NSOKButton ){
+		NSURL * filePath = [openPanel URL];
+		NSString* nss = [filePath path];
+		strncpy(strbuf, [nss UTF8String], 1024);
+		return strbuf;
+	}
+	return 0;
+}
+const char* CoreWindow::FileSaveDialog(const char* ext) const
+{
+	static char strbuf[1024] = {};
+	NSString* nsext = [NSString stringWithUTF8String:ext];
+	NSSavePanel *savePanel	= [NSSavePanel savePanel];
+    NSArray *allowedFileTypes = [NSArray arrayWithObjects:nsext,nil];
+    [savePanel setAllowedFileTypes:allowedFileTypes];
+    NSInteger pressedButton = [savePanel runModal];
+    
+    if( pressedButton == NSOKButton ){
+        NSURL * filePath = [savePanel URL];
+		NSString* nss = [filePath path];
+		strncpy(strbuf, [nss UTF8String], 1024);
+		return strbuf;
+    }
+	return 0;
+}

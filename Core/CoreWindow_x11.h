@@ -46,7 +46,9 @@ public:
 	int GetHeight() const;
     
     const char* GetExePath() const;
-	
+	const char* FileOpenDialog(const char* ext) const;
+	const char* FileSaveDialog(const char* ext) const;
+
 protected:
     class Impl;
     Impl* m_imp;

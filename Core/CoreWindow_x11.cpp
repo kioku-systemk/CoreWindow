@@ -227,3 +227,11 @@ int CoreWindow::GetHeight() const
     return m_imp->m_h;
 }
 
+const char* CoreWindow::FileOpenDialog(const char* ext) const
+{
+	return 0;
+}
+const char* CoreWindow::FileSaveDialog(const char* ext) const
+{
+	return 0;
+}

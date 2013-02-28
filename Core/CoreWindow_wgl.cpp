@@ -8,8 +8,10 @@
 
 #include "CoreWindow_wgl.h"
 #include <gl/GL.h>
+#include <Windows.h>
 #include <WindowsX.h>
 #include <stdio.h>
+#include <string.h>
 
 CoreWindow* g_mainWin = 0;
 
@@ -377,4 +379,65 @@ const char* CoreWindow::GetExePath() const
 	_splitpath(exefilepath, 0, exepath, 0, 0);
 #pragma warning(pop)
 	return exepath;
+}
+
+const char* CoreWindow::FileOpenDialog(const char* ext) const
+{
+	static char filename[MAX_PATH];
+	char filter[512];
+	static OPENFILENAMEA ofn;
+	ZeroMemory(filename,MAX_PATH);
+	ZeroMemory(&ofn,sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = m_hWnd;
+	wsprintf(filter, "%s files\\*.%s\\All files\\*.*\\\\", ext,ext);
+	const int sn = lstrlen(filter);
+	for (int i = 0; i < sn; ++i) // Convert
+		if (filter[i] == '\\')
+			filter[i] = '\0';
+	ofn.lpstrFilter = filter;
+	ofn.lpstrFile = filename;
+	ofn.nMaxFile = sizeof(filename);
+	ofn.Flags = OFN_FILEMUSTEXIST;
+	ofn.lpstrTitle = "Open";
+	ofn.lpstrDefExt = ext;
+
+	if (!GetOpenFileName( &ofn ) )
+		return 0;
+	
+	return filename;
+}
+
+const char* CoreWindow::FileSaveDialog(const char* ext) const
+{
+	static char filename[MAX_PATH];
+	char filter[512];
+	static OPENFILENAMEA ofn;
+	ZeroMemory(filename,MAX_PATH);
+	ZeroMemory(&ofn,sizeof(ofn));
+	ofn.lStructSize = sizeof(OPENFILENAME);
+	ofn.hwndOwner = m_hWnd;
+	ofn.lpstrFile = filename;
+	wsprintf(filter, "%s files\\*.%s\\All files\\*.*\\\\", ext,ext);
+	const int sn = lstrlen(filter);
+	for (int i = 0; i < sn; ++i) // Convert
+		if (filter[i] == '\\')
+			filter[i] = '\0';
+	ofn.lpstrFilter = filter;
+	ofn.nMaxFile = MAX_PATH;
+	ofn.Flags = OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
+	ofn.lpstrTitle = "Save";
+	ofn.lpstrDefExt = ext;
+	if (!GetSaveFileName(&ofn))
+		return 0;
+
+	// add default extension
+	char* ptr = strrchr(filename, '\\');
+	ptr = strrchr(ptr, '.');
+	if (!ptr && *filter) {
+		ptr = strchr(filter + strlen(filter) + 1, '.');
+		if (ptr && *(ptr+1)!='*')
+			strncat(filename, ptr, MAX_PATH);
+	}
+	return filename;
 }

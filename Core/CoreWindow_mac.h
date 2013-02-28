@@ -53,6 +53,8 @@ public:
     int GetHeight() const { return m_h; }
     
     const char* GetExePath() const;
+	const char* FileOpenDialog(const char* ext) const;
+	const char* FileSaveDialog(const char* ext) const;
 
 protected:
 	ObjC_ID m_win;

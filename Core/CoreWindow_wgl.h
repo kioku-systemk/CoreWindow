@@ -52,15 +52,16 @@ public:
 	virtual void Toplevel       (bool top);
 	void Active(void);
 	void SwapBuffer();
+	static void DoEvents();
+	static void MainLoop();
 	
 	HDC GetHDC();
 	int GetWidth() const  { return m_w; }
 	int GetHeight() const { return m_h; }
 	
 	const char* GetExePath() const;
-
-	static void DoEvents();
-	static void MainLoop();
+	const char* FileOpenDialog(const char* ext) const;
+	const char* FileSaveDialog(const char* ext) const;
 };
 
 
