@@ -23,6 +23,9 @@ inline void trace(const char* f, ...)
 }
 #endif
 
+#include <string>
+#include <vector>
+
 
 static CoreWindow* g_mainWin = 0;
 
@@ -324,7 +327,22 @@ static CoreWindow* g_mainWin = 0;
 @end
 
 namespace {
-   
+std::vector<std::string> split(std::string str, const std::string& delim)
+{
+	std::vector<std::string> result;
+	size_t cutAt;
+	while( (cutAt = str.find_first_of(delim)) != str.npos ) {
+		if(cutAt > 0) {
+			result.push_back(str.substr(0, cutAt));
+		}
+		str = str.substr(cutAt + 1);
+	}
+	if (str.length() > 0) {
+		result.push_back(str);
+	}
+	return result;
+}
+	
 void skAddMenu(void)
 {
  	NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
@@ -538,9 +556,13 @@ const char* CoreWindow::GetExePath() const
 const char* CoreWindow::FileOpenDialog(const char* ext) const
 {
 	static char strbuf[1024] = {};
-	NSString* nsext = [NSString stringWithUTF8String:ext];
+	std::vector<std::string> exts = split(std::string(ext), "|");
+	NSMutableArray *allowedFileTypes = [NSMutableArray array];
+	for (size_t i = 0; i < exts.size(); ++i){
+		NSString* nsext = [NSString stringWithUTF8String:exts[i].c_str()];
+		[allowedFileTypes addObject:nsext];
+	}
 	NSOpenPanel *openPanel	= [NSOpenPanel openPanel];
-	NSArray *allowedFileTypes = [NSArray arrayWithObjects:nsext,nil];
     [openPanel setAllowedFileTypes:allowedFileTypes];
     NSInteger pressedButton = [openPanel runModal];
 
@@ -555,9 +577,13 @@ const char* CoreWindow::FileOpenDialog(const char* ext) const
 const char* CoreWindow::FileSaveDialog(const char* ext) const
 {
 	static char strbuf[1024] = {};
-	NSString* nsext = [NSString stringWithUTF8String:ext];
+	std::vector<std::string> exts = split(std::string(ext), "|");
+	NSMutableArray *allowedFileTypes = [NSMutableArray array];
+	for (size_t i = 0; i < exts.size(); ++i){
+		NSString* nsext = [NSString stringWithUTF8String:exts[i].c_str()];
+		[allowedFileTypes addObject:nsext];
+	}
 	NSSavePanel *savePanel	= [NSSavePanel savePanel];
-    NSArray *allowedFileTypes = [NSArray arrayWithObjects:nsext,nil];
     [savePanel setAllowedFileTypes:allowedFileTypes];
     NSInteger pressedButton = [savePanel runModal];
     

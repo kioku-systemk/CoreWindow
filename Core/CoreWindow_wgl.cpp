@@ -12,8 +12,29 @@
 #include <WindowsX.h>
 #include <stdio.h>
 #include <string.h>
+#include <string>
+#include <vector>
 
+namespace {
 CoreWindow* g_mainWin = 0;
+
+std::vector<std::string> split(std::string str, const std::string& delim)
+{
+	std::vector<std::string> result;
+	size_t cutAt;
+	while( (cutAt = str.find_first_of(delim)) != str.npos ) {
+		if(cutAt > 0) {
+			result.push_back(str.substr(0, cutAt));
+		}
+		str = str.substr(cutAt + 1);
+	}
+	if (str.length() > 0) {
+		result.push_back(str);
+	}
+	return result;
+}
+
+} // namespace
 
 #if _UNICODE
 #define _TX(x) L##x
@@ -384,23 +405,31 @@ const char* CoreWindow::GetExePath() const
 const char* CoreWindow::FileOpenDialog(const char* ext) const
 {
 	static char filename[MAX_PATH];
-	char filter[512];
 	static OPENFILENAMEA ofn;
 	ZeroMemory(filename,MAX_PATH);
 	ZeroMemory(&ofn,sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = m_hWnd;
-	wsprintf(filter, "%s files\\*.%s\\All files\\*.*\\\\", ext,ext);
-	const int sn = lstrlen(filter);
+	std::string allfilters;
+	std::vector<std::string> exts = split(std::string(ext), "|");
+	for (size_t i = 0; i < exts.size(); ++i)
+	{
+		char filter[512];
+		wsprintf(filter, "%s files\\*.%s\\", exts[i].c_str(),exts[i].c_str());
+		allfilters += std::string(filter);
+	}
+	allfilters += std::string("All files\\*.*\\\\");
+	const int sn = static_cast<int>(allfilters.size());
 	for (int i = 0; i < sn; ++i) // Convert
-		if (filter[i] == '\\')
-			filter[i] = '\0';
-	ofn.lpstrFilter = filter;
+		if (allfilters[i] == '\\')
+			allfilters[i] = '\0';
+	ofn.lpstrFilter = allfilters.c_str();
 	ofn.lpstrFile = filename;
 	ofn.nMaxFile = sizeof(filename);
 	ofn.Flags = OFN_FILEMUSTEXIST;
 	ofn.lpstrTitle = "Open";
-	ofn.lpstrDefExt = ext;
+	if (exts.size())
+		ofn.lpstrDefExt = exts[0].c_str();
 
 	if (!GetOpenFileName( &ofn ) )
 		return 0;
@@ -411,33 +440,41 @@ const char* CoreWindow::FileOpenDialog(const char* ext) const
 const char* CoreWindow::FileSaveDialog(const char* ext) const
 {
 	static char filename[MAX_PATH];
-	char filter[512];
 	static OPENFILENAMEA ofn;
 	ZeroMemory(filename,MAX_PATH);
 	ZeroMemory(&ofn,sizeof(ofn));
 	ofn.lStructSize = sizeof(OPENFILENAME);
 	ofn.hwndOwner = m_hWnd;
 	ofn.lpstrFile = filename;
-	wsprintf(filter, "%s files\\*.%s\\All files\\*.*\\\\", ext,ext);
-	const int sn = lstrlen(filter);
+	std::string allfilters;
+	std::vector<std::string> exts = split(std::string(ext), "|");
+	for (size_t i = 0; i < exts.size(); ++i)
+	{
+		char filter[512];
+		wsprintf(filter, "%s files\\*.%s\\", exts[i].c_str(),exts[i].c_str());
+		allfilters += std::string(filter);
+	}
+	allfilters += std::string("All files\\*.*\\\\");
+	const int sn = static_cast<int>(allfilters.size());
 	for (int i = 0; i < sn; ++i) // Convert
-		if (filter[i] == '\\')
-			filter[i] = '\0';
-	ofn.lpstrFilter = filter;
+		if (allfilters[i] == '\\')
+			allfilters[i] = '\0';
+	ofn.lpstrFilter = allfilters.c_str();
 	ofn.nMaxFile = MAX_PATH;
 	ofn.Flags = OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
 	ofn.lpstrTitle = "Save";
-	ofn.lpstrDefExt = ext;
+	ofn.lpstrDefExt = exts[0].c_str();
 	if (!GetSaveFileName(&ofn))
 		return 0;
 
 	// add default extension
-	char* ptr = strrchr(filename, '\\');
+	const char* ptr = strrchr(filename, '\\');
 	ptr = strrchr(ptr, '.');
-	if (!ptr && *filter) {
-		ptr = strchr(filter + strlen(filter) + 1, '.');
-		if (ptr && *(ptr+1)!='*')
-			strncat(filename, ptr, MAX_PATH);
+	if (!ptr && allfilters.size()) 
+	{
+		char buf[MAX_PATH];
+		memcpy(buf, filename, MAX_PATH);
+		wsprintf(filename,"%s%s",buf,exts[0].c_str());
 	}
 	return filename;
 }
