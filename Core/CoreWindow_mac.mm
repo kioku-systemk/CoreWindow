@@ -555,6 +555,7 @@ const char* CoreWindow::GetExePath() const
 
 const char* CoreWindow::FileOpenDialog(const char* ext) const
 {
+    NSOpenGLContext *cctx = [NSOpenGLContext currentContext];
 	static char strbuf[1024] = {};
 	std::vector<std::string> exts = split(std::string(ext), "|");
 	NSMutableArray *allowedFileTypes = [NSMutableArray array];
@@ -570,12 +571,15 @@ const char* CoreWindow::FileOpenDialog(const char* ext) const
 		NSURL * filePath = [openPanel URL];
 		NSString* nss = [filePath path];
 		strncpy(strbuf, [nss UTF8String], 1024);
+        [cctx makeCurrentContext];
 		return strbuf;
 	}
+    [cctx makeCurrentContext];
 	return 0;
 }
 const char* CoreWindow::FileSaveDialog(const char* ext) const
 {
+    NSOpenGLContext *cctx = [NSOpenGLContext currentContext];
 	static char strbuf[1024] = {};
 	std::vector<std::string> exts = split(std::string(ext), "|");
 	NSMutableArray *allowedFileTypes = [NSMutableArray array];
@@ -591,7 +595,9 @@ const char* CoreWindow::FileSaveDialog(const char* ext) const
         NSURL * filePath = [savePanel URL];
 		NSString* nss = [filePath path];
 		strncpy(strbuf, [nss UTF8String], 1024);
+        [cctx makeCurrentContext];
 		return strbuf;
     }
+    [cctx makeCurrentContext];
 	return 0;
 }
