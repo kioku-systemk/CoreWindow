@@ -148,6 +148,9 @@ void CoreWindow::DoEvents(void)
 	char text[255];
 	int mx,my;
 	
+	if (!XPending(m_display))
+		return;
+	
 	XNextEvent(m_display, &evt );
 	//printf("EVENT=%d\n",evt.type);
 	switch ( evt.type ) {
