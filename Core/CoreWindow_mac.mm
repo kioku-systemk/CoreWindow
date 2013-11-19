@@ -112,6 +112,10 @@ static CoreWindow* g_mainWin = 0;
 	m_ownerWin = win;
 }
 
+- (BOOL)canBecomeKeyView
+{
+    return YES;
+}
 
 - (BOOL)acceptsFirstResponder
 {
@@ -450,7 +454,12 @@ CoreWindow::CoreWindow(int x, int y, int width ,int height, const char* title, b
 	NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
 		
 	[NSApplication sharedApplication];
-		
+
+	// Set Front process (need for keyboard and mouse events at console mode)
+	ProcessSerialNumber psn = { 0, kCurrentProcess };
+    TransformProcessType(&psn, kProcessTransformToForegroundApplication);
+    SetFrontProcess(&psn);
+	
 	[NSApp finishLaunching];
 
     
