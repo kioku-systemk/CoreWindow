@@ -1,7 +1,7 @@
 INCS=
 LIBS=-lGL
 
-DEFINES = -g
+DEFINES = -g `gtk-config --cflags --libs`
 
 CXX=g++
 
