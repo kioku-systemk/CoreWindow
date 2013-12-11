@@ -2,7 +2,7 @@
 # for Linux if NO, don't depend on GTK
 USE_GTK_FILEDIALOG = YES
 
-UNAME=`uname`
+UNAME=$(shell uname)
 ifeq ($(UNAME),Linux)
   LIBS=-lGL
   ifeq ($(USE_GTK_FILEDIALOG),YES)
