@@ -14,8 +14,10 @@
 #include <stdio.h>
 //--------------------------
 
+#ifdef USE_GTK
 #include <gtk/gtk.h>
 #include <string.h>
+#endif
 
 namespace {
     const int MAXFILEPATH = 1024;
@@ -24,6 +26,7 @@ namespace {
 	
   const char* gtkFileDialog (const char* ext, bool save)
 	{
+#ifdef USE_GTK
 		GtkWidget *filew;
 		
 		int argc = 1;
@@ -53,6 +56,7 @@ namespace {
 		gtk_widget_destroy(dialog);
 		while (gtk_events_pending())
 		  gtk_main_iteration();
+#endif
 		return 0;
 	}
 	const char* gtkFileSaveDialog (const char* ext)

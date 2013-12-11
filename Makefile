@@ -1,9 +1,25 @@
-INCS=
-LIBS=-lGL
 
-DEFINES = -g `gtk-config --cflags --libs`
+# for Linux if NO, don't depend on GTK
+USE_GTK_FILEDIALOG = YES
 
-CXX=g++
+UNAME=`uname`
+ifeq ($(UNAME),Linux)
+  LIBS=-lGL
+  ifeq ($(USE_GTK_FILEDIALOG),YES)
+    GTK=`pkg-config gtk+-2.0 --libs --cflags` -DUSE_GTK
+  endif
+  DEFINES = -O2 $(GTK)
+  CXX=g++
+  SRC=test.cpp
+  COREWIN=Core/CoreWindow_x11.cpp
+else # MacOSX
+  LIBS=-framework OpenGL -framework Cocoa
+  DEFINES = -O2
+  CXX=clang++
+  SRC=test.cpp
+  COREWIN=Core/CoreWindow_mac.mm
+endif
+
 
 all:
-	$(CXX) $(INCS) $(DEFINES) test.cpp Core/CoreWindow_x11.cpp $(LIBS) -o Test
+	$(CXX) $(DEFINES) $(SRC) $(COREWIN) $(LIBS) -o Test
