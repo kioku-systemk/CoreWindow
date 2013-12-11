@@ -22,12 +22,7 @@ namespace {
     static char filename[MAXFILEPATH];
     int btnmode = 0;
 	
-	const char* gtkFileSaveDialog (const char* ext)
-	{
-		// TODO
-		return 0;
-	}
-	const char* gtkFileOpenDialog (const char* ext)
+  const char* gtkFileDialog (const char* ext, bool save)
 	{
 		GtkWidget *filew;
 		
@@ -37,10 +32,11 @@ namespace {
 	        char* argv_i[] = {name,0};
 		argv = reinterpret_cast<char**>(&argv_i);
 		gtk_init (&argc, &argv);
-		GtkWidget* dialog = gtk_file_chooser_dialog_new("Open",
-														0,GTK_FILE_CHOOSER_ACTION_OPEN,
+		const char* title = (save ? "Save" : "Open");
+		GtkWidget* dialog = gtk_file_chooser_dialog_new(title,
+								0,save ? GTK_FILE_CHOOSER_ACTION_SAVE : GTK_FILE_CHOOSER_ACTION_OPEN,
 														GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-														GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+								(save ? GTK_STOCK_SAVE : GTK_STOCK_OPEN), GTK_RESPONSE_ACCEPT, NULL);
 		gtk_widget_show_all(dialog);
 		gint res = gtk_dialog_run(GTK_DIALOG(dialog));
 		if (res == GTK_RESPONSE_ACCEPT) {
@@ -59,6 +55,15 @@ namespace {
 		  gtk_main_iteration();
 		return 0;
 	}
+	const char* gtkFileSaveDialog (const char* ext)
+	{
+	   return gtkFileDialog(ext, true);
+	}
+	const char* gtkFileOpenDialog (const char* ext)
+	{
+	  return gtkFileDialog(ext, false);
+	}
+
 	
 } // namespace
 
