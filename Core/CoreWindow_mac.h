@@ -49,6 +49,8 @@ public:
 	static void DoEvents(void);
 	static void MainLoop(void);
     
+	void GoFullscreen(bool fullscreen);
+
     int GetWidth() const  { return m_w; }
     int GetHeight() const { return m_h; }
     

@@ -554,6 +554,14 @@ void CoreWindow::Toplevel(bool top)
 		[m_win setLevel:NSNormalWindowLevel];
 }
 
+void CoreWindow::GoFullscreen(bool fullscreen)
+{
+    if (fullscreen)
+        [m_view enterFullScreenMode:[NSScreen mainScreen] withOptions:nil];
+    else
+        [m_view exitFullScreenModeWithOptions:nil];
+}
+
 const char* CoreWindow::GetExePath() const
 {
     static char exepath[2048];

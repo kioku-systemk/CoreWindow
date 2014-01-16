@@ -289,6 +289,12 @@ void CoreWindow::MainLoop(void)
 		DoEvents();
     }
 }
+
+void CoreWindow::GoFullscreen(bool fullscreen)
+{
+	// TODO
+}
+
 const char* CoreWindow::GetExePath() const
 {
     return 0; // TODO:

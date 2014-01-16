@@ -188,6 +188,7 @@ void CoreWindow::Toplevel(bool top)
 
 CoreWindow::CoreWindow(int x, int y, int width, int height, const TCHAR* title, bool fullscreenmode)
 {
+    m_inited = false;
 	 createWindow(x, y, width, height, title, fullscreenmode);
 	 initGL(m_hWnd);
 	 RECT rect;
@@ -299,6 +300,7 @@ LRESULT CALLBACK CoreWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 
 		case WM_PAINT:
 		{
+            if (m_inited)
 			Draw();
 			break;
 		}
@@ -308,24 +310,30 @@ LRESULT CALLBACK CoreWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 			break;
 		}
 
-		case WM_LBUTTONDOWN:
+        case WM_LBUTTONDOWN:
+			SetCapture(hWnd);
 			MouseLeftDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		break;
+            break;
 		case WM_LBUTTONUP:
 			MouseLeftUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		break;
+			ReleaseCapture();
+            break;
 		case WM_RBUTTONDOWN:
+			SetCapture(hWnd);
 			MouseRightDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		break;
+            break;
 		case WM_RBUTTONUP:
 			MouseRightUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		break;
+			ReleaseCapture();
+            break;
 		case WM_MBUTTONDOWN:
+			SetCapture(hWnd);
 			MouseMiddleDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		break;
+            break;
 		case WM_MBUTTONUP:
 			MouseMiddleUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		break;
+			ReleaseCapture();
+            break;
 		case WM_MOUSEMOVE:
 			MouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		break;
@@ -388,6 +396,30 @@ HDC CoreWindow::GetHDC()
 void CoreWindow::SwapBuffer()
 {
 	SwapBuffers(m_hDC);
+}
+
+
+void CoreWindow::GoFullscreen(bool fullscreen)
+{
+	DWORD dwStyle = (DWORD)GetWindowLong(m_hWnd, GWL_STYLE);
+	//DWORD dwExStyle = (DWORD)GetWindowLong(hWnd, GWL_EXSTYLE);
+	if (!fullscreen) {
+		//dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+		dwStyle   = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+		m_w  = m_restore_width;
+		m_h  = m_restore_height;
+	} else {
+		m_restore_width  = m_w;
+		m_restore_height = m_h;
+		m_w  = GetSystemMetrics(SM_CXSCREEN);
+		m_h  = GetSystemMetrics(SM_CYSCREEN);
+		dwStyle   =  WS_VISIBLE | WS_POPUP;
+	}
+	SetWindowLong(m_hWnd, GWL_STYLE,dwStyle);
+	//SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, m_w, m_h, SWP_SHOWWINDOW);
+	SetWindowPos(m_hWnd, GW_HWNDFIRST, 0, 0, m_w, m_h, SWP_SHOWWINDOW);
+	resize(m_w, m_h);
+	return;
 }
 
 const char* CoreWindow::GetExePath() const
