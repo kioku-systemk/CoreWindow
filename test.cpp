@@ -9,7 +9,9 @@
 #include "Core/CoreWindow.h"
 
 // GL Headers
-#if defined(__APPLE__)
+#if defined(__EMSCRIPTEN__)
+#include <GLES2/gl2.h>
+#elif defined(__APPLE__)
 #include <OpenGL/gl.h>
 #else
 #include <GL/gl.h>
@@ -36,6 +38,15 @@ public:
 	{
         printf("MouseLeftUp(%d,%d)\n", x,y);
 	}
+    void MouseRightDown(int x, int y)
+	{
+        printf("MouseRightDown(%d,%d)\n", x,y);
+	}
+	void MouseRightUp(int x, int y)
+	{
+        printf("MouseRightUp(%d,%d)\n", x,y);
+	}
+
 	void MouseMove(int x, int y)
 	{
         printf("MouseMove(%d,%d)\n", x,y);
