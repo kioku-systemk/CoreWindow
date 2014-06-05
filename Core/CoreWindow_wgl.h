@@ -61,7 +61,7 @@ public:
 	int GetWidth() const  { return m_w; }
 	int GetHeight() const { return m_h; }
 	
-	void GoFullscreen(bool fullscreen);
+	void GoFullscreen(bool fullscreen,bool cursor=true);
 
 	const char* GetExePath() const;
 	const char* FileOpenDialog(const char* ext) const;

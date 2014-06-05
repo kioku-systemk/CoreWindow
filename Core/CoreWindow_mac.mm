@@ -554,8 +554,13 @@ void CoreWindow::Toplevel(bool top)
 		[m_win setLevel:NSNormalWindowLevel];
 }
 
-void CoreWindow::GoFullscreen(bool fullscreen)
+void CoreWindow::GoFullscreen(bool fullscreen,bool cursor)
 {
+    if (!cursor)
+        [NSCursor hide];
+    else
+        [NSCursor unhide];
+    
     if (fullscreen)
         [m_view enterFullScreenMode:[NSScreen mainScreen] withOptions:nil];
     else

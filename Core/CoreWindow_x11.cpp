@@ -7,8 +7,14 @@
  */
 
 #include "CoreWindow_x11.h"
+
+#ifdef EMSCRIPTEN
+#include <GLES2/gl2.h>
+#include <EGL/egl.h>
+#else
 #include <GL/gl.h>
 #include <GL/glx.h>
+#endif
 
 #include <X11/Xlib.h>
 #include <stdio.h>
@@ -290,7 +296,7 @@ void CoreWindow::MainLoop(void)
     }
 }
 
-void CoreWindow::GoFullscreen(bool fullscreen)
+void CoreWindow::GoFullscreen(bool fullscreen, bool cursor)
 {
 	// TODO
 }

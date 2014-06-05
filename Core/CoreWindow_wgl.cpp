@@ -399,8 +399,10 @@ void CoreWindow::SwapBuffer()
 }
 
 
-void CoreWindow::GoFullscreen(bool fullscreen)
+void CoreWindow::GoFullscreen(bool fullscreen,bool cursor)
 {
+	ShowCursor(cursor);
+	
 	DWORD dwStyle = (DWORD)GetWindowLong(m_hWnd, GWL_STYLE);
 	//DWORD dwExStyle = (DWORD)GetWindowLong(hWnd, GWL_EXSTYLE);
 	if (!fullscreen) {
