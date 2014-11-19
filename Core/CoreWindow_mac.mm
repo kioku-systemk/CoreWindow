@@ -36,7 +36,7 @@ static CoreWindow* g_mainWin = 0;
 @end
 
 @implementation skMacDelegate
-- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication;
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
 {
 	return YES;
 }
@@ -373,7 +373,7 @@ void skAddMenu(void)
 	
 	[pool release];
 }
-
+/*
 void skTestApplicationPath(void)
 {
  	NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
@@ -393,7 +393,7 @@ void skTestApplicationPath(void)
 	
 	[pool release];
 }
-
+*/
 
 void skPollDeviceC(void)
 {
